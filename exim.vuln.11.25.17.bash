@@ -49,10 +49,10 @@ eximver=$(rpm -qa |grep exim |cut -d'-' -f2) #Versions 4.88 and newer are vulner
 #
 function chk_fix(){
     echo "Double-checking config was applied successfully..."
-    if [ $isvuln != $fix ]
+    if [ "$isvuln" != "$fix" ]
     then
         echo "Unfortunately, something went wrong. Check and apply the config manually."
-    elif [ $isvuln = $fix ]
+    elif [ "$isvuln" = "$fix" ]
     then
         echo "Successfully applied config."
     fi
