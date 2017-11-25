@@ -43,7 +43,7 @@
 # Checks to ensure config is persistent after restart.
 #-----------Set Variables:
 isvuln=$(exim -bP |grep chunking_advertise_hosts) # Here, we'd expect to see this on a cPanel setup: chunking_advertise_hosts = 198.51.100.1
-fix=$("chunking_advertise_hosts =")
+fix=$"chunking_advertise_hosts ="
 eximver=$(rpm -qa |grep exim |cut -d'-' -f2) #Versions 4.88 and newer are vulnerable for the moment - no CVE given yet.
 #-----------Functions:
 #
@@ -53,7 +53,8 @@ function chk_fix(){
     then
         echo "Unfortunately, something went wrong. Check and apply the config manually."
     elif [ $isvuln = $fix ]
-        echo "Success!"
+    then
+        echo "Successfully applied config."
     fi
 }
 # Uses sed to apply the config.
@@ -71,7 +72,7 @@ then
     service exim reload
     /scripts/restartsrv_exim
     chk_fix
-elif [ $eximver = 4.89 ] && [ $isvuln != $fix ]
+elif [ "$eximver" = 4.89 ] && [ "$isvuln" != "$fix" ]
 then
     echo "Exim version 4.89 and *IS* vulnerable, applying changes to /etc/exim.conf and /usr/local/cpanel/etc/exim/config_options ..."
     apply_conf
@@ -80,6 +81,7 @@ then
     /scripts/restartsrv_exim
     chk_fix
 elif [ $isvuln = $fix ]
+then
     echo "Looks like this has already been mitigated, exiting."
     exit
 else
