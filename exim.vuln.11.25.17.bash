@@ -64,7 +64,7 @@ function apply_conf(){
 }
 #----------------
 echo "Checking for Exim BDAT remote code execution vulnerability, and assuming cPanel host..." # Need to function and segment if this is big so that all Exim-based servers can be patched.
-if [ $eximver = 4.88 ] && [ $isvuln != $fix ]
+if [ "$eximver" = '4.88' ] && [ "$isvuln" != "$fix" ]
 then
     echo "Exim version 4.88 and *IS* vulnerable, applying changes to /etc/exim.conf and /usr/local/cpanel/etc/exim/config_options ..."
     apply_conf
@@ -72,7 +72,7 @@ then
     service exim reload
     /scripts/restartsrv_exim
     chk_fix
-elif [ "$eximver" = 4.89 ] && [ "$isvuln" != "$fix" ]
+elif [ "$eximver" = '4.89' ] && [ "$isvuln" != "$fix" ]
 then
     echo "Exim version 4.89 and *IS* vulnerable, applying changes to /etc/exim.conf and /usr/local/cpanel/etc/exim/config_options ..."
     apply_conf
@@ -80,7 +80,7 @@ then
     service exim reload
     /scripts/restartsrv_exim
     chk_fix
-elif [ $isvuln = $fix ]
+elif [ "$isvuln" = "$fix" ]
 then
     echo "Looks like this has already been mitigated, exiting."
     exit
