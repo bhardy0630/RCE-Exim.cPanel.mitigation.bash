@@ -40,9 +40,13 @@
 #
 # =========Begin:
 # To start, what Exim version are we running, and if the right version, are we vulnerable?
+# Checks to ensure config is persistent after restart.
+#-----------Set Variables:
+isvuln=$(exim -bP |grep chunking_advertise_hosts) # Here, we'd expect to see this on a cPanel setup: chunking_advertise_hosts = 198.51.100.1
+fix=$("chunking_advertise_hosts =")
+eximver=$(rpm -qa |grep exim |cut -d'-' -f2) #Versions 4.88 and newer are vulnerable for the moment - no CVE given yet.
 #-----------Functions:
 #
-# Checks to ensure config is persistent after restart.
 function chk_fix(){
     echo "Double-checking config was applied successfully..."
     if [ $isvuln != $fix ]
@@ -57,10 +61,6 @@ function apply_conf(){
     sed -i 's/chunking_advertise_hosts.*/chunking_advertise_hosts =/g' /etc/exim.conf
     sed -i 's/chunking_advertise_hosts.*/chunking_advertise_hosts =/g' /usr/local/cpanel/etc/exim/config_options
 }
-#-----------Set Variables:
-isvuln=$(exim -bP |grep chunking_advertise_hosts) # Here, we'd expect to see this on a cPanel setup: chunking_advertise_hosts = 198.51.100.1
-fix=$("chunking_advertise_hosts =")
-eximver=$(rpm -qa |grep exim |cut -d'-' -f2) #Versions 4.88 and newer are vulnerable for the moment - no CVE given yet.
 #----------------
 echo "Checking for Exim BDAT remote code execution vulnerability, and assuming cPanel host..." # Need to function and segment if this is big so that all Exim-based servers can be patched.
 if [ $eximver = 4.88 ] && [ $isvuln != $fix ]
@@ -88,4 +88,3 @@ else
 fi
 echo "Exim remote code execution vulnerability mitigated. Exiting now."
 exit
-
